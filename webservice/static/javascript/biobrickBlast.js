@@ -10,66 +10,6 @@ var tbody = $('#resultTbody'),
 $(init);
 
 function init(){
-	$('.ui.selection.dropdown').dropdown();
-
-	$('button[task-id]').click(function (){
-		var _t = $(this);
-		_t.html('<i class="icon loading></i>');
-		$.getJSON('/result/' + _t.attr('task-id'))
-		.done(function (data){
-			if(data.errno===0){
-				$(this).replaceAll(data.result);
-			} else {
-				$(this).replaceAll(data.err_msg);
-			}
-			
-		}).fail(ajaxError);
-		
-	});
-
-	$('a[data-url]').click(function (e){
-		e.preventDefault();
-		$.get($(this).attr('data-url'));
-	})
-
-	$('#taskQuery button').click(function (e){
-		e.preventDefault();
-		var task_id = $(this).prev().val();
-		$.getJSON('/result/'+task_id)
-		.done(addTask)
-		.fail(ajaxError);
-	});
-
-
-	$('form#userInput > button').click(function (e){
-		e.preventDefault();
-		this.className = "ui loading button";
-		submitInput(this);
-	});
-
-
-	$('input.filePrew').change(function (){
-		var _t = this;
-		if(this.value!==''){
-			$('#fileName').html(_t.files[0].name+'<i class="icon close"></i>');
-			$('a.btn_addPic > span').html("change file");
-			$('#inputText').attr('disabled',true);
-			$('#fileName > i').click(function (){
-			$('input.filePrew').val('').change();
-			$('#userInput').attr('action','/query/upload')
-	});
-		} else {
-			$('#fileName').text('');
-			$('#inputText').removeAttr('disabled');
-			$('a.btn_addPic > span').html('<em>+</em>select file')
-		}
-	});
-
-	$('#fileName').hover(function (){
-		$(this).find('i').css('visibility','visible');
-	}, function (){
-		$(this).find('i').css('visibility','hidden');
-	});
 
 	if(window.localStorage.task && window.localStorage.task!==''){
 		var arr = $.parseJSON(localStorage.task);
@@ -91,6 +31,57 @@ function init(){
 			}
 		}
 	}
+
+	$('.ui.selection.dropdown').dropdown();
+
+	$('a[data-url]').click(function (e){
+		e.preventDefault();
+		$.get($(this).attr('data-url'));
+	})
+
+	$('#taskQuery button').click(function (e){
+		e.preventDefault();
+		var task_id = $(this).prev().val();
+		$.getJSON('/result/'+task_id)
+		.done(addTask)
+		.fail(ajaxError);
+	});
+
+
+	$('form#userInput > button').click(function (e){
+		e.preventDefault();
+		this.className = "ui loading button";
+		submitInput(this);
+		return false;
+	});
+
+
+	$('input.filePrew').change(function (){
+		var _t = this;
+		if(this.value!==''){
+			$('#fileName').html(_t.files[0].name+'<i class="icon close"></i>');
+			$('a.btn_addPic > span').html("change file");
+			$('#inputText').attr('disabled',true);
+			inputForm.attr({
+				'enctype':'multipart/form-data',
+				'action': '/query/upload'
+			});
+			$('#fileName > i').click(function (){
+				$('input.filePrew').val('').change();
+			});
+		} else {
+			$('#fileName').text('');
+			$('#inputText').removeAttr('disabled');
+			$('a.btn_addPic > span').html('<em>+</em>select file');
+			inputForm.removeAttr("enctype").attr('action','/query');
+		}
+	});
+
+	$('#fileName').hover(function (){
+		$(this).find('i').css('visibility','visible');
+	}, function (){
+		$(this).find('i').css('visibility','hidden');
+	});
 }
 
 function finished(arr, i){
@@ -98,7 +89,21 @@ function finished(arr, i){
 		$('<td>').text(arr[i].task_id),
 		$('<td>').html('<i class="icon checkmark"></i>' + arr[i].status),
 		$('<td>').append($('<button>').attr('task-id',arr[i].task_id)
-			.addClass('ui green button').text("show")),
+			.addClass('ui green button').text("show")
+			.click(function (){
+				var _t = $(this);
+				_t.html('<i class="icon loading"></i>');
+				$.getJSON('/result/' + _t.attr('task-id'))
+				.done(function (data){
+					if(data.errno===0){
+						$(this).replaceAll(data.result);
+					} else {
+						$(this).replaceAll(data.err_msg);
+					}
+					
+				}).fail(ajaxError);
+			});
+		),
 		$('<td>').append($('<a>').attr({
 			'href': 'javascript:void(0)',
 			'data-url':'/result/download/' + arr[i].task_id
@@ -180,22 +185,22 @@ function change(arr, i){
 	}
 	tbody.find('tr').eq(arr.length - i -1).replaceWith(tr);
 }
-function ajaxError(){
-	alert("Connection error");
-	
+function ajaxError(a,b,c){
+	alert('Conection Error');
 }
 
 function submitInput(btn){
 	$.ajax({
-		url: '/query',
+		url: inputForm.attr('action'),
 		type: 'POST',
 		data: inputForm.serialize(),
 		dataType: 'json'
 	})
 	.done(addTask)
-	.fail(
-		// 异步提交连接出错
-		ajaxError);
+	.fail(function(){
+			ajaxError();
+			btn.className = 'ui blue button';
+		});
 }
 
 function addTask(data){
