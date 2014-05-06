@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- Standard Meta -->
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+	<!-- Site Properities -->
+	<title>Biobrick Blast</title>
+
+	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
+
+	<link rel="stylesheet" type="text/css" href="static/css/semantic.min.css">
+	<link rel="stylesheet" type="text/css" href="static/css/biobrickBlast.css"></head>
+<body>
+	<div id="container">
+		<h1 class="ui header"> <i class="lab icon"></i>
+			Biobrick Blast
+		</h1>
+		
+		<div class="userPanel ui form">
+			<form id="userInput">
+				<div class="paramPanel">
+					<div class="form-control">
+						<label>Program</label>
+						<div class="ui selection dropdown">
+							<input type="hidden" name="program" value="blastn">
+							<div class="default text">blastn</div> <i class="dropdown icon"></i>
+							<div class="menu ui transition hidden">
+								<div class="item" data-value="blastn">blastn</div>
+								<div class="item" data-value="blastp">blastp</div>
+								<div class="item" data-value="blastx">blastx</div>
+								<div class="item" data-value="tblastn">tblastn</div>
+								<div class="item" data-value="tblastx">tblastx</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-control">
+						<label>E-Value</label>
+						<div class="ui selection dropdown">
+							<input type="hidden" name="evalue" value="1000">
+							<div class="default text">1000</div>
+							<i class="dropdown icon"></i>
+							<div class="menu ui transition hidden">
+								<div class="item" data-value="100">1000</div>
+								<div class="item" data-value="100">100</div>
+								<div class="item" data-value="10">10</div>
+								<div class="item" data-value="1">1</div>
+								<div class="item" data-value="0.1">0.1</div>
+								<div class="item" data-value="0.001">0.001</div>
+								<div class="item" data-value="0.0001">0.0001</div>
+								<div class="item" data-value="0.00001">0.00001</div>
+								<div class="item" data-value="0.000001">0.000001</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-control">
+						<label>database</label>
+						<div class="ui selection dropdown">
+							<input type="hidden" name="database" value="Biobrick">
+							<div class="default text">Biobrick</div>
+							<i class="dropdown icon"></i>
+							<div class="menu ui transition hidden">
+								<div class="item" data-value="Biobrick">Biobrick</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-control">
+						<label>Output Format</label>
+						<div class="ui selection dropdown">
+							<input type="hidden" name="outfmt" value="0">
+							<div class="default text">pairwise</div>
+							<i class="dropdown icon"></i>
+							<div class="menu ui transition hidden">
+								<div class="item" data-value=0>pairwise</div>
+								<div class="item" data-value=1>query-anchored showing identities</div>
+								<div class="item" data-value=2>query-anchored no identities</div>
+								<div class="item" data-value=3>flat query-anchored show identities</div>
+								<div class="item" data-value=4>flat query-anchored no identities</div>
+								<div class="item" data-value=5>XML Blast output</div>
+								<div class="item" data-value=6>tabular</div>
+								<div class="item" data-value=7>tabular with comment lines</div>
+								<div class="item" data-value=8>Text ASN.1</div>
+								<div class="item" data-value=9>Binary ASN.1</div>
+								<div class="item" data-value=10>Comma-separated values</div>
+								<div class="item" data-value=11>BLAST archive format (ASN.1)</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="inputSequences">
+					<div id="inputTextarea">
+						<label>Input Sequences:</label>
+						<textarea  name="input" id="inputText"></textarea>
+					</div>
+					<div id="inputFile">
+						<label>Input File:</label>
+						<span id="fileName">
+						</span>
+						<a class="btn_addPic" href="javascript:void(0);">
+							<span> <em>+</em>
+								select file
+							</span>
+							<input class="filePrew" title="支持txt、csv格式，文件小于5M" tabIndex="3" type="file" size=3 name="input"/>
+						</a>
+
+					</div>
+				</div>
+				<button class="ui blue button">Submit</button>
+
+			</form>
+		</div>
+		<div class="ui horizontal divider">
+			<i class="lab icon"></i>
+		</div>
+		<form class="ui form" id="taskQuery">
+			<input type="text" name="task-id" placeholder="Task_ID"/>
+			<button class="ui blue labeled icon button"><i class="add icon"></i> add</button>
+		</form>
+		
+		<table class="ui table segment" >
+			<thead>
+				<tr>
+					<th id="table_task_id">Task_ID</th>
+					<th id="table_statu">Statu</th>
+					<th >Result</th>
+					<th id="table_output_file">Output File</th>
+				</tr>
+			</thead>
+			<tbody id="resultTbody">
+			</tbody>
+		</table>
+	</div>
+
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
+	<script src="static/javascript/semantic.min.js"></script>
+	<script src="static/javascript/biobrickBlast.js"></script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+@charset "UTF-8";
+/**
+ * 
+ * @authors Min Huang (huangm.ss.sysu@gmail.com)
+ * @date    2014-05-04 23:38:20
+ * @version $1.0$
+ */
+body{
+	color: #555555;
+	font-size: 16px;
+	font-family: 'Source Sans Pro', "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+}
+#container > h1 > i, .ui.horizontal.divider > i{
+	color: #6ECFF5;
+}
+#container{
+	margin: auto;
+	width: 1100px;
+}
+.fr{
+	float: right;
+}
+.userPanel{
+	margin-top: 30px;
+}
+.inputSequences{
+	float: left;
+	width: 580px;
+	min-height: 220px;
+	/*height: 300px;*/
+}
+textarea#inputText{
+	height: 180px ;
+	font-size: 14px;
+}
+.paramPanel{
+	float: left;
+	width: 450px;
+	margin-left: 30px;
+}
+.form-control{
+	margin-top: 25px;
+}
+.form-control label{
+	display: inline-block;
+	width: 125px;
+	text-align: center;
+}
+.ui.button{
+	text-transform: none;
+}
+#userInput button{
+	margin-top: 20px;
+	margin-left: 435px;
+}
+
+#inputFile{
+	/*display: none;*/
+}
+a{
+	text-decoration:none;
+} 
+.btn_addPic{
+	position: relative; 
+	display: inline-block; 
+	overflow: hidden; 
+	width: 110px; 
+	height: 39px; 
+	border: 1px solid #EBEBEB; 
+	background: none repeat scroll 0 0 #F3F3F3; 
+	color: #999999; 
+	text-align: center; 
+	cursor: pointer; 
+	border-radius: 10px;
+	vertical-align: middle;
+} 
+.btn_addPic span{
+	line-height: 39px;
+} 
+.btn_addPic:hover{
+	color: #6ECFF5;
+}
+.btn_addPic em { 
+	display: inline-block; 
+	overflow: hidden; 
+	margin: 10px 5px 10px 0; 
+	width: 18px; 
+	height: 18px; 
+	background:url(http://p7.qhimg.com/t014ce592c1a0b2d489.png) 0 0; 
+	vertical-align: middle; 
+	line-height: 20em; 
+} 
+.btn_addPic:hover em{
+	background-position:-19px 0;
+} 
+.filePrew { 
+	position: absolute; 
+	top: 0; 
+	left: 0; 
+	display: block; 
+	width: 140px; 
+	height: 39px; 
+	font-size: 100px; /* 增大不同浏览器的可点击区域 */ 
+	opacity: 0; /* 实现的关键点 */ 
+	filter: alpha(opacity=0);/* 兼容IE */ 
+}
+#inputFile{
+	margin-top: 20px;
+}
+#fileName{
+	padding: 10px;
+	color: #6ECFF5;
+}
+#inputFile .close{
+	color: #CD2929;
+	visibility: hidden;
+	cursor: pointer;
+}
+#taskQuery input{
+	width: 500px;
+	margin-right: 10px;
+}
+#taskQuery button{
+	margin-top: -6px;
+}
+.ui.horizontal.divider{
+	margin: 30px 0;
+}
+table{
+	word-break: break-all;
+}
+#resultTbody button{
+	padding: 5px 15px;
+	font-size: 14px;
+}
+#table_task_id{
+	min-width: 120px;
+}
+#table_statu{
+	min-width: 126px;
+}
+#table_output_file{
+	min-width: 115px;
+}
