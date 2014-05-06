@@ -30,3 +30,8 @@ BLAST_DEFAULT_KWARGS = {
         '-matrix': 'BLOSUM62',
     },
 }
+BLAST_DB_DIR = './blast_db'
+BLAST_INPUT_DIR = './tmp/input'
+BLAST_OUTPUT_DIR = './tmp/output'
+
+POLL_STATUS_RETRIES = 50
