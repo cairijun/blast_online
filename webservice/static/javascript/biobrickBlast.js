@@ -102,11 +102,10 @@ function finished(arr, i){
 					}
 					
 				}).fail(ajaxError);
-			});
+			})
 		),
 		$('<td>').append($('<a>').attr({
-			'href': 'javascript:void(0)',
-			'data-url':'/result/download/' + arr[i].task_id
+			'href':'/result/download/' + arr[i].task_id
 		}).html('<i class="icon download"></i>Download')));
 		return tr;
 }
@@ -193,8 +192,10 @@ function submitInput(btn){
 	$.ajax({
 		url: inputForm.attr('action'),
 		type: 'POST',
-		data: inputForm.serialize(),
-		dataType: 'json'
+		data: new FormData(inputForm[0]),
+		dataType: 'json',
+		contentType: false,
+		processData: false,
 	})
 	.done(addTask)
 	.fail(function(){
