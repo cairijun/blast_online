@@ -178,7 +178,7 @@ function change(arr, i){
 			tr = waiting(arr, i);
 			break;
 	}
-	tbody.find('tr').eq(arr.length - i -1).replaceAll(tr);
+	tbody.find('tr').eq(arr.length - i -1).replaceWith(tr);
 }
 function ajaxError(){
 	alert("Connection error");
