@@ -10,7 +10,7 @@ var tbody = $('#resultTbody'),
 	querybtn = $('form#userInput > button'),
 	modal = $('.ui.modal'),
 	modalHead = $('.ui.modal .header'),
-	modalContent = $('.ui.modal .content'),
+	modalContent = $('.ui.modal .content textarea'),
 	addTask_id;
 
 $(init);
@@ -77,17 +77,14 @@ function init() {
 						content = data.err_msg + data.msg;
 					}
 					modalHead.text('Task_id : ' + task_id).css('color','#119000');
-					modalContent.html($('<pre>').text(content));
+					modalContent.val(content);
 					modal.modal('show');
 					$(_t).text('show');
 				}).fail(ajaxError);
 		} else if (_t.className === 'ui red button') {
 			var num = $(_t).attr('num');
 			modalHead.text('Task_id : ' + task_id).css('color','#CD2929');
-			modalContent.html($('<pre>').text(arr[num].msg)
-				.css({
-					'white-space':'pre-wrap',
-					'color':'#CD2929'}));
+			modalContent.val(arr[num].msg);
 			modal.modal('show');
 		}
 	});
