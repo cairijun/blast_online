@@ -1,20 +1,26 @@
 /**
- * 
+ *
  * @authors Min Huang (huangm.ss.sysu@gmail.com)
  * @date    2014-05-04 23:38:22
  * @version $1.0$
  */
+
 var tbody = $('#resultTbody'),
-	inputForm = $('form#userInput');
+	inputForm = $('form#userInput'),
+	querybtn = $('form#userInput > button'),
+	modal = $('.ui.modal'),
+	modalHead = $('.ui.modal .header'),
+	modalContent = $('.ui.modal .content'),
+	addTask_id;
 
 $(init);
 
-function init(){
+function init() {
 
-	if(window.localStorage.task && window.localStorage.task!==''){
+	if (window.localStorage.task && window.localStorage.task !== '') {
 		var arr = $.parseJSON(localStorage.task);
-		for (var i = arr.length-1; i >= 0; i--){
-			switch(arr[i].status){
+		for (var i = arr.length - 1; i >= 0; i--) {
+			switch (arr[i].status) {
 				case 'finished':
 					tbody.append(finished(arr, i));
 					break;
@@ -24,151 +30,174 @@ function init(){
 				case 'nonexistent':
 					tbody.append(nonexistent(arr, i));
 					break;
-				default :
-					tbody.append(waiting(arr,i));
-					longPoll(arr,i);
+				default:
+					tbody.append(waiting(arr, i));
+					longPoll(arr, i);
 					break;
 			}
 		}
 	}
+	modal.modal();
 
 	$('.ui.selection.dropdown').dropdown();
 
-	$('a[data-url]').click(function (e){
+	$('a[data-url]').click(function(e) {
 		e.preventDefault();
 		$.get($(this).attr('data-url'));
 	})
 
-	$('#taskQuery button').click(function (e){
+	$('#taskQuery button').click(function(e) {
 		e.preventDefault();
-		var task_id = $(this).prev().val();
-		$.getJSON('/result/'+task_id)
-		.done(addTask)
-		.fail(ajaxError);
+		addTask_id = $(this).prev().val();
+		$.getJSON('/status/' + addTask_id)
+			.done(addTask)
+			.fail(ajaxError);
 	});
 
 
-	$('form#userInput > button').click(function (e){
+	querybtn.click(function(e) {
 		e.preventDefault();
 		this.className = "ui loading button";
-		submitInput(this);
+		submitInput();
 		return false;
 	});
 
+	tbody.click(function(el) {
+		_t = el.target;
+		console.log (el.target)
+		var task_id = $(_t).attr('task-id');
+		if (_t.className === 'ui green button') {
+			$(_t).html('<i class="icon loading"></i>');
+			$.getJSON('/result/' + task_id)
+				.done(function(data) {
+					var content;
+					if (data.errno === 0) {
+						content = data.result;
+					} else {
+						content = data.err_msg + data.msg;
+					}
+					modalHead.text('Task_id : ' + task_id).css('color','#119000');
+					modalContent.html($('<pre>').text(content));
+					modal.modal('show');
+					$(_t).text('show');
+				}).fail(ajaxError);
+		} else if (_t.className === 'ui red button') {
+			var num = $(_t).attr('num');
+			modalHead.text('Task_id : ' + task_id).css('color','#CD2929');
+			modalContent.html($('<pre>').text(arr[num].msg)
+				.css({
+					'white-space':'pre-wrap',
+					'color':'#CD2929'}));
+			modal.modal('show');
+		}
+	});
 
-	$('input.filePrew').change(function (){
+	$('input.filePrew').change(function() {
 		var _t = this;
-		if(this.value!==''){
-			$('#fileName').html(_t.files[0].name+'<i class="icon close"></i>');
+		if (this.value !== '') {
+			$('#fileName').html(_t.files[0].name + '<i class="icon close"></i>');
 			$('a.btn_addPic > span').html("change file");
-			$('#inputText').attr('disabled',true);
+			$('#inputText').attr('disabled', true);
 			inputForm.attr({
-				'enctype':'multipart/form-data',
+				'enctype': 'multipart/form-data',
 				'action': '/query/upload'
 			});
-			$('#fileName > i').click(function (){
+			$('#fileName > i').click(function() {
 				$('input.filePrew').val('').change();
 			});
 		} else {
 			$('#fileName').text('');
 			$('#inputText').removeAttr('disabled');
 			$('a.btn_addPic > span').html('<em>+</em>select file');
-			inputForm.removeAttr("enctype").attr('action','/query');
+			inputForm.removeAttr("enctype").attr('action', '/query');
 		}
 	});
 
-	$('#fileName').hover(function (){
-		$(this).find('i').css('visibility','visible');
-	}, function (){
-		$(this).find('i').css('visibility','hidden');
+	$('#fileName').hover(function() {
+		$(this).find('i').css('visibility', 'visible');
+	}, function() {
+		$(this).find('i').css('visibility', 'hidden');
 	});
 }
 
-function finished(arr, i){
+function finished(arr, i) {
 	var tr = $('<tr>').addClass('positive').append(
 		$('<td>').text(arr[i].task_id),
 		$('<td>').html('<i class="icon checkmark"></i>' + arr[i].status),
-		$('<td>').append($('<button>').attr('task-id',arr[i].task_id)
-			.addClass('ui green button').text("show")
-			.click(function (){
-				var _t = $(this);
-				_t.html('<i class="icon loading"></i>');
-				$.getJSON('/result/' + _t.attr('task-id'))
-				.done(function (data){
-					if(data.errno===0){
-						$(this).replaceAll(data.result);
-					} else {
-						$(this).replaceAll(data.err_msg);
-					}
-					
-				}).fail(ajaxError);
-			})
-		),
+		$('<td>').append($('<button>').attr('task-id', arr[i].task_id)
+			.addClass('ui green button').text("show")),
 		$('<td>').append($('<a>').attr({
-			'href':'/result/download/' + arr[i].task_id
+			'href': '/result/download/' + arr[i].task_id
 		}).html('<i class="icon download"></i>Download')));
-		return tr;
+	return tr;
 }
 
-function failed(arr, i){
+function failed(arr, i) {
 	var tr = $('<tr>').addClass('negative').append(
 		$('<td>').text(arr[i].task_id),
 		$('<td>').html('<i class="icon close"></i>' + arr[i].status),
-		$('<td>').text(arr.err_msg),
+		$('<td>').append($('<button>').attr({
+				'task-id': arr[i].task_id,
+				'num': i
+			})
+			.addClass('ui red button').text("information")),
 		$('<td>'));
 
-		return tr;
+	return tr;
 }
 
-function nonexistent(arr, i){
+function nonexistent(arr, i) {
 	var tr = $('<tr>').addClass('warning').append(
 		$('<td>').text(arr[i].task_id),
 		$('<td>').html('<i class="icon question"></i>' + arr[i].status),
 		$('<td>').text('Task_id is invalid'),
 		$('<td>'));
 
-		return tr;
+	return tr;
 }
 
-function waiting(arr, i){
+function waiting(arr, i) {
 	var tr = $('<tr>').append(
 		$('<td>').text(arr[i].task_id),
 		$('<td>').html('<i class="icon loading"></i>' + arr[i].status),
-		$('<td>').text(arr[i].err_msg),
-		$('<td>')
-	);
-		return tr;
+		$('<td>').html(arr[i].msg),
+		$('<td>'));
+
+	return tr;
 }
-function isEnd(arr, i){
-	if(arr[i].status!=='finished' && arr[i].status!=='failed' 
-		&& arr[i].status!=='nonexistent'){
+
+function isEnd(arr, i) {
+	if (arr[i].status !== 'finished' && arr[i].status !== 'failed' && arr[i].status !== 'nonexistent') {
 		return false;
 	}
-		return true;
+	return true;
 }
 
-function longPoll(arr, i){
-	$.getJSON('/status/'+arr[i].task_id+'/poll')
-		.done(function (data){
-			if(data.errno===0){
-
-				if(arr[i].status !== data.status){
+function longPoll(arr, i) {
+	$.getJSON('/status/' + arr[i].task_id + '/poll')
+		.done(function(data) {
+			if (data.errno === 0) {
+				console.log(data.msg)
+				if (arr[i].status !== data.status) {
 					arr[i].status = data.status;
+					arr[i].err_msg = data.err_msg;
+					arr[i].msg = data.msg;
+					localStorage.task = JSON.stringify(arr)
 					change(arr, i);
 				}
-				if( !isEnd(arr,i) ){
+				if (!isEnd(arr, i)) {
 					longPoll(arr, i);
 				}
 			} else {
 				alert(arr[i].task_id, data.err_msg);
-				longPoll(arr,i);
+				longPoll(arr, i);
 			}
 		}).fail(ajaxError);
 }
 
-function change(arr, i){
+function change(arr, i) {
 	var tr;
-	switch(arr[i].status){
+	switch (arr[i].status) {
 		case 'finished':
 			tr = finished(arr, i);
 			break;
@@ -178,17 +207,18 @@ function change(arr, i){
 		case 'nonexistent':
 			tr = nonexistent(arr, i);
 			break;
-		default :
+		default:
 			tr = waiting(arr, i);
 			break;
 	}
-	tbody.find('tr').eq(arr.length - i -1).replaceWith(tr);
+	tbody.find('tr').eq(arr.length - i - 1).replaceWith(tr);
 }
-function ajaxError(a,b,c){
+
+function ajaxError(a, b, c) {
 	alert('Conection Error');
 }
 
-function submitInput(btn){
+function submitInput() {
 	$.ajax({
 		url: inputForm.attr('action'),
 		type: 'POST',
@@ -197,38 +227,32 @@ function submitInput(btn){
 		contentType: false,
 		processData: false,
 	})
-	.done(addTask)
-	.fail(function(){
+		.done(addTask)
+		.fail(function() {
 			ajaxError();
-			btn.className = 'ui blue button';
+			querybtn.className = 'ui blue button';
 		});
 }
 
-function addTask(data){
-		if (!data.errno){
-			var taskObj = {
-				task_id: data.task_id,
-				status: data.status || 'waiting',
-				err_msg: ''
-			}
-			if(typeof localStorage.task === 'undefined'){
-				var arr = [taskObj];
-			} else {
-				var arr = $.parseJSON(localStorage.task);
-				arr.push(taskObj);
-			}
-			window.localStorage.task = JSON.stringify(arr);
-			window.location.reload();
-		} else {
-			// 查询提交失败
-			alert(data.err_msg);
-			btn.className = 'ui blue button';
+function addTask(data) {
+	if (!data.errno) {
+		var taskObj = {
+			task_id: data.task_id || addTask_id,
+			status: data.status || 'waiting',
+			err_msg: '',
+			msg: ''
 		}
+		if (typeof localStorage.task === 'undefined') {
+			var arr = [taskObj];
+		} else {
+			var arr = $.parseJSON(localStorage.task);
+			arr.push(taskObj);
+		}
+		window.localStorage.task = JSON.stringify(arr);
+		window.location.reload();
+	} else {
+		// 查询提交失败
+		alert(data.err_msg);
+		querybtn.className = 'ui blue button';
+	}
 }
-
-
-
-
-
-
-

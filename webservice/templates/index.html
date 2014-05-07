@@ -11,14 +11,14 @@
 
 	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
 
-	<link rel="stylesheet" type="text/css" href="static/css/semantic.min.css">
-	<link rel="stylesheet" type="text/css" href="static/css/biobrickBlast.css"></head>
+	<link rel="stylesheet" type="text/css" href="../static/css/semantic.min.css">
+	<link rel="stylesheet" type="text/css" href="../static/css/biobrickBlast.css"></head>
 <body>
 	<div id="container">
 		<h1 class="ui header"> <i class="lab icon"></i>
 			Biobrick Blast
 		</h1>
-		
+
 		<div class="userPanel ui form">
 			<form id="userInput" action='/query' onsubmit="return false;" enctype="application/x-www-form-urlencoded">
 				<div class="paramPanel">
@@ -97,8 +97,7 @@
 					</div>
 					<div id="inputFile">
 						<label>Input File:</label>
-						<span id="fileName">
-						</span>
+						<span id="fileName"></span>
 						<a class="btn_addPic" href="javascript:void(0);">
 							<span> <em>+</em>
 								select file
@@ -117,15 +116,18 @@
 		</div>
 		<form class="ui form" id="taskQuery">
 			<input type="text" name="task-id" placeholder="Task_ID"/>
-			<button class="ui blue labeled icon button"><i class="add icon"></i> add</button>
+			<button class="ui blue labeled icon button">
+				<i class="add icon"></i>
+				add
+			</button>
 		</form>
-		
-		<table class="ui table segment" >
+
+		<table class="ui table segment">
 			<thead>
 				<tr>
 					<th id="table_task_id">Task_ID</th>
 					<th id="table_statu">Statu</th>
-					<th >Result</th>
+					<th>Result</th>
 					<th id="table_output_file">Output File</th>
 				</tr>
 			</thead>
@@ -133,9 +135,16 @@
 			</tbody>
 		</table>
 	</div>
+	<div class="ui domal">
+		<i class="close icon"></i>
+		<div class="header">
+		</div>
+		<div class="content">
+		</div>
+	</div>
 
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
-	<script src="static/javascript/semantic.min.js"></script>
-	<script src="static/javascript/biobrickBlast.js"></script>
+	<script src="../static/javascript/semantic.min.js"></script>
+	<script src="../static/javascript/biobrickBlast.js"></script>
 </body>
 </html>

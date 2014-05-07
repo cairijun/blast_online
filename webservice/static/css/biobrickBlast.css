@@ -142,3 +142,6 @@ table{
 #table_output_file{
 	min-width: 115px;
 }
+pre{
+	white-space: pre-warp;
+}
