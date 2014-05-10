@@ -25,7 +25,7 @@
 					<div class="form-control">
 						<label>Program</label>
 						<div class="ui selection dropdown">
-							<input type="hidden" name="program" value="blastn">
+							<input type="hidden" name="program" value="blastn"/>
 							<div class="default text">blastn</div> <i class="dropdown icon"></i>
 							<div class="menu ui transition hidden">
 								<div class="item" data-value="blastn">blastn</div>
@@ -39,11 +39,11 @@
 					<div class="form-control">
 						<label>E-Value</label>
 						<div class="ui selection dropdown">
-							<input type="hidden" name="evalue" value="1000">
+							<input type="hidden" name="evalue" value="1000"/>
 							<div class="default text">1000</div>
 							<i class="dropdown icon"></i>
 							<div class="menu ui transition hidden">
-								<div class="item" data-value="100">1000</div>
+								<div class="item" data-value="1000">1000</div>
 								<div class="item" data-value="100">100</div>
 								<div class="item" data-value="10">10</div>
 								<div class="item" data-value="1">1</div>
@@ -58,7 +58,7 @@
 					<div class="form-control">
 						<label>database</label>
 						<div class="ui selection dropdown">
-							<input type="hidden" name="database" value="Biobrick">
+							<input type="hidden" name="database" value="Biobrick"/>
 							<div class="default text">Biobrick</div>
 							<i class="dropdown icon"></i>
 							<div class="menu ui transition hidden">
@@ -131,18 +131,16 @@
 					<th id="table_output_file">Output File</th>
 				</tr>
 			</thead>
-			<tbody id="resultTbody">
-			</tbody>
+			<tbody id="resultTbody"></tbody>
 		</table>
 	</div>
 	<div class="ui modal">
 		<i class="close icon"></i>
-		<div class="header">
-		</div>
+		<div class="header"></div>
 		<div class="content">
-      <form class="ui form">
-        <textarea disabled></textarea>
-      </form>
+			<form class="ui form">
+				<textarea disabled></textarea>
+			</form>
 		</div>
 	</div>
 

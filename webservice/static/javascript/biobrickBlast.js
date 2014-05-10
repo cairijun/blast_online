@@ -16,9 +16,8 @@ var tbody = $('#resultTbody'),
 $(init);
 
 function init() {
-
-	if (window.localStorage.task && window.localStorage.task !== '') {
-		var arr = $.parseJSON(localStorage.task);
+	if (window.localStorage.getItem('task') && window.localStorage.getItem('task') !== '') {
+		var arr = $.parseJSON(window.localStorage.getItem('task'));
 		for (var i = arr.length - 1; i >= 0; i--) {
 			switch (arr[i].status) {
 				case 'finished':
@@ -37,6 +36,8 @@ function init() {
 			}
 		}
 	}
+
+
 	modal.modal();
 
 	$('.ui.selection.dropdown').dropdown();
@@ -54,6 +55,21 @@ function init() {
 			.fail(ajaxError);
 	});
 
+	$('input:hidden').change(function (){
+		window.localStorage.setItem([this.name],$(this).val());
+	}).val(function (){
+		var value = window.localStorage.getItem(this.name) || $(this).val(),
+			defaultDiv = $(this).next();
+
+		if (this.name === 'outfmt'){
+			var text = defaultDiv.next().next()
+				.find($('div[data-value='+value+']')).text();
+			defaultDiv.text(text);
+		} else {
+			defaultDiv.text(value);
+		}
+		return value;
+	});
 
 	querybtn.click(function(e) {
 		e.preventDefault();
@@ -179,7 +195,7 @@ function longPoll(arr, i) {
 					arr[i].status = data.status;
 					arr[i].err_msg = data.err_msg;
 					arr[i].msg = data.msg;
-					localStorage.task = JSON.stringify(arr)
+					window.localStorage.setItem('task', JSON.stringify(arr));
 					change(arr, i);
 				}
 				if (!isEnd(arr, i)) {
@@ -239,13 +255,13 @@ function addTask(data) {
 			err_msg: '',
 			msg: ''
 		}
-		if (typeof localStorage.task === 'undefined') {
+		if (typeof window.localStorage.getItem(task) === 'undefined') {
 			var arr = [taskObj];
 		} else {
-			var arr = $.parseJSON(localStorage.task);
+			var arr = $.parseJSON(window.localStorage.getItem('task'));
 			arr.push(taskObj);
 		}
-		window.localStorage.task = JSON.stringify(arr);
+		window.localStorage.setItem('task', JSON.stringify(arr));
 		window.location.reload();
 	} else {
 		// 查询提交失败
