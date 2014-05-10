@@ -29,8 +29,10 @@ class _BlastRunError(Exception):
         self.sp_exc = sp_exc
 
     def __str__(self):
-        return ('Blast program return code: %d\nDetails:\ncmd: %s\nmsg:\n%s' %
-                (self.sp_exc.returncode, self.sp_exc.cmd, self.sp_exc.output))
+        return ('Blast program return code: %d\ncmd: %s\nmsg:\n%s' %
+                (self.sp_exc.returncode,
+                 ''.join(self.sp_exc.cmd),
+                 self.sp_exc.output))
 
 
 class _BlastProgram(object):

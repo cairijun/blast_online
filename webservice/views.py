@@ -77,7 +77,7 @@ def result(task_id):
     try:
         filename = safe_join(config.BLAST_OUTPUT_DIR, task_id)
         with open(filename) as fobj:
-            result = fobj.read()
+            result = try_format_output(fobj.read())
     except (NotFound, IOError):
         return jsonify(errno=-2, err_msg='Result not found')
     return jsonify(errno=0, err_msg='Success', result=result)
@@ -87,3 +87,19 @@ def result(task_id):
 def result_download(task_id):
     return send_from_directory(os.path.abspath(config.BLAST_OUTPUT_DIR),
                                task_id)
+
+
+def try_format_output(raw_data):
+    try:
+        result = [[''] * 12]
+        for row in raw_data.split('\n'):
+            if row.startswith('# Fields:'):
+                result[0] = row[10:].split(', ')
+            elif len(row) > 0 and not row.startswith('# '):
+                vals = row.split()
+                if len(vals) != len(result[0]):
+                    raise ValueError
+                result.append(vals)
+    except ValueError:
+        return raw_data
+    return result
