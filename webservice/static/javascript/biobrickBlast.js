@@ -255,7 +255,7 @@ function addTask(data) {
 			err_msg: '',
 			msg: ''
 		}
-		if (typeof window.localStorage.getItem(task) === 'undefined') {
+		if (typeof window.localStorage.getItem('task') === 'undefined') {
 			var arr = [taskObj];
 		} else {
 			var arr = $.parseJSON(window.localStorage.getItem('task'));
