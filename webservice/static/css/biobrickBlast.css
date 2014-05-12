@@ -149,10 +149,10 @@ pre{
 	height: 450px !important;
 	max-height: 2000px !important;
 }
-table#scroll thead{
+table.scrollTable thead{
 	display:block;
 }
-table#scroll tbody {
+table.scrollTable tbody {
 	display: block;
 	max-height: 400px;
 	overflow: auto;
