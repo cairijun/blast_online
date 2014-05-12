@@ -15,8 +15,8 @@ var tbody = $('#resultTbody'),
 	textModalContent = $('#textModal textarea'),
 	scrollTable = $('table.scrollTable'),
 	result = new Object(),
-	addTask_id,
-	timeTask;
+	addTask_id;
+
 $(init);
 
 function init() {
@@ -50,7 +50,7 @@ function init() {
 
 	tableModal.modal();
 	textModal.modal();
-	
+
 
 	$('.ui.selection.dropdown').dropdown();
 
@@ -95,11 +95,8 @@ function init() {
 		var task_id = $(_t).attr('task-id');
 		if (_t.className === 'ui green button') {
 			//if cached
-			if (typeof result[task_id]!== 'undefined'){
-				scrollTable.html(result[task_id]);
-				tableModalHead.text('Task_id : ' + task_id).css('color', '#119000');
-				tableModal.modal('show');
-				tableFitWidth();
+			if (typeof result[task_id] !== 'undefined') {
+				paintTable(task_id);
 
 			} else {
 				$(_t).html('<i class="icon loading"></i>');
@@ -107,7 +104,6 @@ function init() {
 					.done(function(data) {
 						var dataArr;
 						if (data.errno === 0) {
-							console.log(data.result)
 							dataArr = data.result;
 							// be transfromed to table
 							if (typeof dataArr === 'object') {
@@ -132,7 +128,7 @@ function init() {
 								result[task_id] = table.html();
 								paintTable(task_id);
 
-								
+
 							} else {
 								// output directly
 								textModalHead.text('Task_id : ' + task_id).css('color', '#119000');
@@ -141,10 +137,10 @@ function init() {
 							}
 						} else {
 							textModalHead.text('Task_id : ' + task_id).css('color', '#119000');
-							textModalContent.val(data.err_mag+data.msg)
+							textModalContent.val(data.err_mag + data.msg)
 							textModal.modal('show');
 						}
-						
+
 						$(_t).text('show');
 					}).fail(ajaxError);
 			}
@@ -185,19 +181,19 @@ function init() {
 	});
 }
 
-function paintTable(task_id){
-	if (result[task_id]){
+function paintTable(task_id) {
+	if (result[task_id]) {
 		scrollTable.html(result[task_id]);
 		tableModalHead.text('Task_id : ' + task_id).css('color', '#119000');
 		tableModal.modal('show');
 		tableFitWidth();
 	}
-	window.onresize = function (){
-		if (tableModal.hasClass('active')){
+	window.onresize = function() {
+		if (tableModal.hasClass('active')) {
 			console.log(1)
-			setTimeout(function (){
+			setTimeout(function() {
 				paintTable(task_id);
-			},500);
+			}, 200);
 		}
 	}
 }
@@ -205,29 +201,23 @@ function paintTable(task_id){
 function tableFitWidth() {
 	var thead = scrollTable.children("thead"),
 		ths = thead.find("td,th"),
-		tbody = scrollTable.children("tbody"),
-		tbodyTr = tbody.children("tr:first"),
-		tds = tbodyTr.children("td,th"),
-		lastTd = tds.last();
-		if(lastTd.attr('data-width')){
-			lastTd.width(lastTd.attr('data-width'));
-		}
-		thead.css('margin-right','15px')
+		tds = scrollTable.children("tbody")
+			.children("tr:first").children("td,th");
+
+	thead.css('margin-right', '15px')
 	ths.each(function() {
 		var idx = $(this).index(),
 			td = tds.eq(idx),
 			width;
 
-		if($(this).width() > td.width() ){
+		if ($(this).width() > td.width()) {
 			width = $(this).width();
 		} else {
 			width = td.width();
-		} 
+		}
 		td.width(width);
 		$(this).width(width);
-   	});
-		lastTd.attr('data-width',lastTd.width())
-		lastTd.width('');
+	});
 }
 
 function finished(arr, i) {
@@ -352,7 +342,7 @@ function addTask(data) {
 			err_msg: '',
 			msg: ''
 		}
-		if (!window.localStorage.getItem('task') || window.localStorage.getItem('task')==='') {
+		if (!window.localStorage.getItem('task') || window.localStorage.getItem('task') === '') {
 			var arr = [taskObj];
 		} else {
 			var arr = $.parseJSON(window.localStorage.getItem('task'));
