@@ -56,6 +56,24 @@
 					</div>
 
 					<div class="form-control">
+						<label>Database</label>
+						<div class="ui selection dropdown">
+							<input type="hidden" name="database" value="Biobrick"/>
+							<div class="default text">Biobrick</div>
+							<i class="dropdown icon"></i>
+							<div class="menu ui transition hidden">
+								<div class="item" data-value="Biobrick">Biobrick</div>
+								<div class="item" data-value="2013_Distribution">2013_Distribution</div>
+								<div class="item" data-value="2014_Distribution">2014_Distribution</div>
+								<div class="item" data-value="All_Parts_in_Catalog">All_Parts_in_Catalog</div>
+								<div class="item" data-value="In_Stock">In_Stock</div>
+								<div class="item" data-value="In_Stock_or_Pending">In_Stock_or_Pending</div>
+								<div class="item" data-value="Pending">Pending</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-control">
 						<label>Output Format</label>
 						<div class="ui selection dropdown">
 							<input type="hidden" name="outfmt" value="7">
@@ -77,13 +95,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="form-control">
-						<label>Database</label>
-						<div class="ui selection dropdown">
-							<input type="hidden" name="database" value="Biobrick"/>
-							<div class="default text">Biobrick</div>
-						</div>
-					</div>
+
 				</div>
 
 				<div class="inputSequences">
