@@ -10,12 +10,13 @@ var tbody = $('#resultTbody'),
 	querybtn = $('form#userInput > button'),
 	tableModal = $('#tableModal'),
 	tableModalHead = $('#tableModal .header'),
-	tableModalContent = $('#tableModal .content table'),
 	textModal = $('#textModal'),
 	textModalHead = $('#textModal .header'),
 	textModalContent = $('#textModal textarea'),
+	scrollTable = $('table.scrollTable'),
+	result = new Object(),
 	addTask_id,
-	result;
+	timeTask;
 $(init);
 
 function init() {
@@ -50,7 +51,6 @@ function init() {
 	tableModal.modal();
 	textModal.modal();
 	
-	$(window).resize(scrollTable);
 
 	$('.ui.selection.dropdown').dropdown();
 
@@ -94,47 +94,60 @@ function init() {
 		_t = el.target;
 		var task_id = $(_t).attr('task-id');
 		if (_t.className === 'ui green button') {
-			$(_t).html('<i class="icon loading"></i>');
-			$.getJSON('/result/' + task_id)
-				.done(function(data) {
-					var dataArr;
-					if (data.errno === 0) {
-						dataArr = $.parseJSON(data.result);
-						// be transfromed to table
-						if (typeof dataArr === 'object') {
-							var table = $('.ui.celled.table.segment.scrollTable');
-							// have comment lines
-							if (dataArr[0][0] === 'query id') {
-								var theadTr = $('<tr>').appendTo($('thead').appendTo(table));
-								for (var i = 0; i < dataArr[0].length; i++) {
-									$('<th>').text(dataArr[0][i]).appendTo(theadTr);
+			//if cached
+			if (typeof result[task_id]!== 'undefined'){
+				scrollTable.html(result[task_id]);
+				tableModalHead.text('Task_id : ' + task_id).css('color', '#119000');
+				tableModal.modal('show');
+				tableFitWidth();
+
+			} else {
+				$(_t).html('<i class="icon loading"></i>');
+				$.getJSON('/result/' + task_id)
+					.done(function(data) {
+						var dataArr;
+						if (data.errno === 0) {
+							console.log(data.result)
+							dataArr = data.result;
+							// be transfromed to table
+							if (typeof dataArr === 'object') {
+								var table = $('<table>');
+								// have comment lines
+								if (dataArr[0][0] === 'query id') {
+									scrollTable.html('');
+									var theadTr = $('<tr>').appendTo($('<thead>').appendTo(table));
+									for (var i = 0; i < dataArr[0].length; i++) {
+										$('<th>').text(dataArr[0][i]).appendTo(theadTr);
+									}
+
 								}
-							}
-							// add tbody
-							var tbody = $('<tbody>').appendTo(table);
-							for (i = 1; i < dataArr.length; i++) {
-								var tr = $('<tr>').appendTo(tbody);
-								for (var j = 0; j < dataArr[i].length; j++) {
-									$('<td>').text(dataArr[i][j]).appendTo(tr);
+								// add tbody
+								var tbody = $('<tbody>').appendTo(table);
+								for (i = 1; i < dataArr.length; i++) {
+									var tr = $('<tr>').appendTo(tbody);
+									for (var j = 0; j < dataArr[i].length; j++) {
+										$('<td>').text(dataArr[i][j]).appendTo(tr);
+									}
 								}
+								result[task_id] = table.html();
+								paintTable(task_id);
+
+								
+							} else {
+								// output directly
+								textModalHead.text('Task_id : ' + task_id).css('color', '#119000');
+								textModalContent.val(data.result)
+								textModal.modal('show');
 							}
-							tableModalHead.text('Task_id : ' + task_id).css('color', '#119000');
-							tableModal.modal('show');
-							scrollTable();
 						} else {
-							// output directly
 							textModalHead.text('Task_id : ' + task_id).css('color', '#119000');
-							textModalContent.val(data.result)
+							textModalContent.val(data.err_mag+data.msg)
 							textModal.modal('show');
 						}
-					} else {
-						textModalHead.text('Task_id : ' + task_id).css('color', '#119000');
-						textModalContent.val(data.err_mag+data.msg)
-						textModal.modal('show');
-					}
-					
-					$(_t).text('show');
-				}).fail(ajaxError);
+						
+						$(_t).text('show');
+					}).fail(ajaxError);
+			}
 		} else if (_t.className === 'ui red button') {
 			var num = $(_t).attr('num');
 			textModalHead.text('Task_id : ' + task_id).css('color', '#CD2929');
@@ -172,13 +185,49 @@ function init() {
 	});
 }
 
-function scrollTable() {
-	$("table.scrollTable").children("thead").find("td,th").each(function() {
-		var idx = $(this).index();
-		var td = $(this).closest("#scroll").children("tbody")
-			.children("tr:first").children("td,th").eq(idx);
-		$(this).width(td.width());
-	});
+function paintTable(task_id){
+	if (result[task_id]){
+		scrollTable.html(result[task_id]);
+		tableModalHead.text('Task_id : ' + task_id).css('color', '#119000');
+		tableModal.modal('show');
+		tableFitWidth();
+	}
+	window.onresize = function (){
+		if (tableModal.hasClass('active')){
+			console.log(1)
+			setTimeout(function (){
+				paintTable(task_id);
+			},500);
+		}
+	}
+}
+
+function tableFitWidth() {
+	var thead = scrollTable.children("thead"),
+		ths = thead.find("td,th"),
+		tbody = scrollTable.children("tbody"),
+		tbodyTr = tbody.children("tr:first"),
+		tds = tbodyTr.children("td,th"),
+		lastTd = tds.last();
+		if(lastTd.attr('data-width')){
+			lastTd.width(lastTd.attr('data-width'));
+		}
+		thead.css('margin-right','15px')
+	ths.each(function() {
+		var idx = $(this).index(),
+			td = tds.eq(idx),
+			width;
+
+		if($(this).width() > td.width() ){
+			width = $(this).width();
+		} else {
+			width = td.width();
+		} 
+		td.width(width);
+		$(this).width(width);
+   	});
+		lastTd.attr('data-width',lastTd.width())
+		lastTd.width('');
 }
 
 function finished(arr, i) {
@@ -303,7 +352,7 @@ function addTask(data) {
 			err_msg: '',
 			msg: ''
 		}
-		if (typeof window.localStorage.getItem('task') === 'undefined') {
+		if (!window.localStorage.getItem('task') || window.localStorage.getItem('task')==='') {
 			var arr = [taskObj];
 		} else {
 			var arr = $.parseJSON(window.localStorage.getItem('task'));
