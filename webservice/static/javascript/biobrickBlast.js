@@ -200,11 +200,12 @@ function paintTable(task_id) {
 
 function tableFitWidth() {
 	var thead = scrollTable.children("thead"),
+		tbody = scrollTable.children("tbody"),
+		tbodyTr = tbody.children("tr:first"),
 		ths = thead.find("td,th"),
-		tds = scrollTable.children("tbody")
-			.children("tr:first").children("td,th");
+		tds = tbodyTr.children("td,th");
 
-	thead.css('margin-right', '15px')
+	
 	ths.each(function() {
 		var idx = $(this).index(),
 			td = tds.eq(idx),
@@ -218,6 +219,10 @@ function tableFitWidth() {
 		td.width(width);
 		$(this).width(width);
 	});
+	var scrollBarWidth = tbody.width() - tbodyTr.width();
+	console.log(scrollBarWidth, tbody.width(),tbodyTr.width())
+	thead.css('margin-right', scrollBarWidth+'px');
+
 }
 
 function finished(arr, i) {
