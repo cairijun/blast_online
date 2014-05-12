@@ -8,9 +8,12 @@
 var tbody = $('#resultTbody'),
 	inputForm = $('form#userInput'),
 	querybtn = $('form#userInput > button'),
-	modal = $('.ui.modal'),
-	modalHead = $('.ui.modal .header'),
-	modalContent = $('.ui.modal .content'),
+	tableModal = $('#tableModal'),
+	tableModalHead = $('#tableModal .header'),
+	tableModalContent = $('#tableModal .content table'),
+	textModal = $('#textModal'),
+	textModalHead = $('#textModal .header'),
+	textModalContent = $('#textModal textarea'),
 	addTask_id,
 	result;
 $(init);
@@ -44,7 +47,8 @@ function init() {
 
 
 
-	modal.modal();
+	tableModal.modal();
+	textModal.modal();
 	
 	$(window).resize(scrollTable);
 
@@ -93,44 +97,50 @@ function init() {
 			$(_t).html('<i class="icon loading"></i>');
 			$.getJSON('/result/' + task_id)
 				.done(function(data) {
-					var content;
+					var dataArr;
 					if (data.errno === 0) {
-						content = $.parseJSON(data.result);
+						dataArr = $.parseJSON(data.result);
 						// be transfromed to table
-						if (typeof content === 'object') {
-							var table = $('<table>')
-								.addClass('ui celled table segment scrollTable');
+						if (typeof dataArr === 'object') {
+							var table = $('.ui.celled.table.segment.scrollTable');
 							// have comment lines
-							if (content[0][0] === 'query id') {
+							if (dataArr[0][0] === 'query id') {
 								var theadTr = $('<tr>').appendTo($('thead').appendTo(table));
-								for (var i = 0; i < content[0].length; i++) {
-									$('<th>').text(content[0][i]).appendTo(theadTr);
+								for (var i = 0; i < dataArr[0].length; i++) {
+									$('<th>').text(dataArr[0][i]).appendTo(theadTr);
 								}
 							}
 							// add tbody
 							var tbody = $('<tbody>').appendTo(table);
-							for (i = 1; i < content.length; i++) {
+							for (i = 1; i < dataArr.length; i++) {
 								var tr = $('<tr>').appendTo(tbody);
-								for (var j = 0; j < content[i].length; j++) {
-									$('<td>').text(content[i][j]).appendTo(tr);
+								for (var j = 0; j < dataArr[i].length; j++) {
+									$('<td>').text(dataArr[i][j]).appendTo(tr);
 								}
 							}
-							content = table;
+							tableModalHead.text('Task_id : ' + task_id).css('color', '#119000');
+							tableModal.modal('show');
+							scrollTable();
+						} else {
+							// output directly
+							textModalHead.text('Task_id : ' + task_id).css('color', '#119000');
+							textModalContent.val(data.result)
+							textModal.modal('show');
 						}
 					} else {
-						content = data.err_msg + data.msg;
+						textModalHead.text('Task_id : ' + task_id).css('color', '#119000');
+						textModalContent.val(data.err_mag+data.msg)
+						textModal.modal('show');
 					}
-					modalHead.text('Task_id : ' + task_id).css('color', '#119000');
-					modalContent.html(content);
-					scrollTable();
-					modal.modal('show');
+					
 					$(_t).text('show');
 				}).fail(ajaxError);
 		} else if (_t.className === 'ui red button') {
 			var num = $(_t).attr('num');
-			modalHead.text('Task_id : ' + task_id).css('color', '#CD2929');
-			$('textarea').attr('disabled', 'disabled').text(arr[num].msg).appendTo(modalContent);
-			modal.modal('show');
+			textModalHead.text('Task_id : ' + task_id).css('color', '#CD2929');
+			console.log(textModalContent)
+			textModalContent.text(arr[num].msg);
+			textModal.modal('show');
 		}
 	});
 
