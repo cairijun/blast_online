@@ -149,3 +149,15 @@ pre{
 	height: 450px !important;
 	max-height: 2000px !important;
 }
+table#scroll thead{
+	display:block;
+}
+table#scroll tbody {
+	display: block;
+	max-height: 400px;
+	overflow: auto;
+}
+.ui.modal.large{
+	width: 94%;
+	margin-left: -47%;
+}

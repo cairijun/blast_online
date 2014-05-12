@@ -10,8 +10,8 @@
 	<title>Biobrick Blast</title>
 
 	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700">
-	<link rel="stylesheet" type="text/css" href="static/css/semantic.min.css">
-	<link rel="stylesheet" type="text/css" href="static/css/biobrickBlast.css"></head>
+	<link rel="stylesheet" type="text/css" href="../static/css/semantic.min.css">
+	<link rel="stylesheet" type="text/css" href="../static/css/biobrickBlast.css"></head>
 <body>
 	<div id="container">
 		<h1 class="ui header"> <i class="lab icon"></i>
@@ -54,17 +54,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="form-control">
-						<label>database</label>
-						<div class="ui selection dropdown">
-							<input type="hidden" name="database" value="Biobrick"/>
-							<div class="default text">Biobrick</div>
-							<i class="dropdown icon"></i>
-							<div class="menu ui transition hidden">
-								<div class="item" data-value="Biobrick">Biobrick</div>
-							</div>
-						</div>
-					</div>
+
 					<div class="form-control">
 						<label>Output Format</label>
 						<div class="ui selection dropdown">
@@ -85,6 +75,13 @@
 								<div class="item" data-value=10>Comma-separated values</div>
 								<div class="item" data-value=11>BLAST archive format (ASN.1)</div>
 							</div>
+						</div>
+					</div>
+					<div class="form-control">
+						<label>Database</label>
+						<div class="ui selection dropdown">
+							<input type="hidden" name="database" value="Biobrick"/>
+							<div class="default text">Biobrick</div>
 						</div>
 					</div>
 				</div>
@@ -133,18 +130,14 @@
 			<tbody id="resultTbody"></tbody>
 		</table>
 	</div>
-	<div class="ui modal">
+	<div class="ui large modal">
 		<i class="close icon"></i>
 		<div class="header"></div>
-		<div class="content">
-			<form class="ui form">
-				<textarea disabled></textarea>
-			</form>
-		</div>
+		<div class="content" ></div>
 	</div>
 
-	<script src="static/javascript/jquery-2.0.3.min.js"></script>
-	<script src="static/javascript/semantic.min.js"></script>
-	<script src="static/javascript/biobrickBlast.js"></script>
+	<script src="../static/javascript/jquery-2.0.3.min.js"></script>
+	<script src="../static/javascript/semantic.min.js"></script>
+	<script src="../static/javascript/biobrickBlast.js"></script>
 </body>
 </html>

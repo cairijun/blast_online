@@ -10,14 +10,19 @@ var tbody = $('#resultTbody'),
 	querybtn = $('form#userInput > button'),
 	modal = $('.ui.modal'),
 	modalHead = $('.ui.modal .header'),
-	modalContent = $('.ui.modal .content textarea'),
-	addTask_id;
-
+	modalContent = $('.ui.modal .content'),
+	addTask_id,
+	result;
 $(init);
 
 function init() {
 	if (window.localStorage.getItem('task') && window.localStorage.getItem('task') !== '') {
-		var arr = $.parseJSON(window.localStorage.getItem('task'));
+
+		var arr = $.parseJSON(window.localStorage.task);
+		// no more than 15 task_id
+		// while (arr.length>15){
+		// 	arr.shift();
+		// }
 		for (var i = arr.length - 1; i >= 0; i--) {
 			switch (arr[i].status) {
 				case 'finished':
@@ -38,7 +43,10 @@ function init() {
 	}
 
 
+
 	modal.modal();
+	
+	$(window).resize(scrollTable);
 
 	$('.ui.selection.dropdown').dropdown();
 
@@ -55,15 +63,15 @@ function init() {
 			.fail(ajaxError);
 	});
 
-	$('input:hidden').change(function (){
-		window.localStorage.setItem([this.name],$(this).val());
-	}).val(function (){
+	$('input:hidden').change(function() {
+		window.localStorage.setItem([this.name], $(this).val());
+	}).val(function() {
 		var value = window.localStorage.getItem(this.name) || $(this).val(),
 			defaultDiv = $(this).next();
 
-		if (this.name === 'outfmt'){
+		if (this.name === 'outfmt') {
 			var text = defaultDiv.next().next()
-				.find($('div[data-value='+value+']')).text();
+				.find($('div[data-value=' + value + ']')).text();
 			defaultDiv.text(text);
 		} else {
 			defaultDiv.text(value);
@@ -80,7 +88,6 @@ function init() {
 
 	tbody.click(function(el) {
 		_t = el.target;
-		console.log (el.target)
 		var task_id = $(_t).attr('task-id');
 		if (_t.className === 'ui green button') {
 			$(_t).html('<i class="icon loading"></i>');
@@ -88,19 +95,41 @@ function init() {
 				.done(function(data) {
 					var content;
 					if (data.errno === 0) {
-						content = data.result;
+						content = $.parseJSON(data.result);
+						// be transfromed to table
+						if (typeof content === 'object') {
+							var table = $('<table>')
+								.addClass('ui celled table segment scrollTable');
+							// have comment lines
+							if (content[0][0] === 'query id') {
+								var theadTr = $('<tr>').appendTo($('thead').appendTo(table));
+								for (var i = 0; i < content[0].length; i++) {
+									$('<th>').text(content[0][i]).appendTo(theadTr);
+								}
+							}
+							// add tbody
+							var tbody = $('<tbody>').appendTo(table);
+							for (i = 1; i < content.length; i++) {
+								var tr = $('<tr>').appendTo(tbody);
+								for (var j = 0; j < content[i].length; j++) {
+									$('<td>').text(content[i][j]).appendTo(tr);
+								}
+							}
+							content = table;
+						}
 					} else {
 						content = data.err_msg + data.msg;
 					}
-					modalHead.text('Task_id : ' + task_id).css('color','#119000');
-					modalContent.val(content);
+					modalHead.text('Task_id : ' + task_id).css('color', '#119000');
+					modalContent.html(content);
+					scrollTable();
 					modal.modal('show');
 					$(_t).text('show');
 				}).fail(ajaxError);
 		} else if (_t.className === 'ui red button') {
 			var num = $(_t).attr('num');
-			modalHead.text('Task_id : ' + task_id).css('color','#CD2929');
-			modalContent.val(arr[num].msg);
+			modalHead.text('Task_id : ' + task_id).css('color', '#CD2929');
+			$('textarea').attr('disabled', 'disabled').text(arr[num].msg).appendTo(modalContent);
 			modal.modal('show');
 		}
 	});
@@ -130,6 +159,15 @@ function init() {
 		$(this).find('i').css('visibility', 'visible');
 	}, function() {
 		$(this).find('i').css('visibility', 'hidden');
+	});
+}
+
+function scrollTable() {
+	$("table.scrollTable").children("thead").find("td,th").each(function() {
+		var idx = $(this).index();
+		var td = $(this).closest("#scroll").children("tbody")
+			.children("tr:first").children("td,th").eq(idx);
+		$(this).width(td.width());
 	});
 }
 
@@ -255,7 +293,7 @@ function addTask(data) {
 			err_msg: '',
 			msg: ''
 		}
-		if (typeof window.localStorage.getItem(task) === 'undefined') {
+		if (typeof window.localStorage.getItem('task') === 'undefined') {
 			var arr = [taskObj];
 		} else {
 			var arr = $.parseJSON(window.localStorage.getItem('task'));
