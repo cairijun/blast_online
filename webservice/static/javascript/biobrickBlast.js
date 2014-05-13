@@ -46,10 +46,8 @@ function init() {
 		}
 	}
 
-
-
-	tableModal.modal();
 	textModal.modal();
+	tableFitWidth();
 
 
 	$('.ui.selection.dropdown').dropdown();
@@ -90,8 +88,8 @@ function init() {
 		return false;
 	});
 
-	tbody.click(function(el) {
-		_t = el.target;
+	tbody.click(function(e) {
+		_t = e.target || e.srcElement;
 		var task_id = $(_t).attr('task-id');
 		if (_t.className === 'ui green button') {
 			//if cached
@@ -132,6 +130,66 @@ function init() {
 			textModal.modal('show');
 		}
 	});
+
+	$('.scrollTable').click(function(e) {
+		var _t = e.target || e.srcElement,
+			task_id = tableModalHead.text().slice(10);
+		if (_t.tagName === 'TH') {
+			for (var i = 0; i < result[task_id][0].length; i++) {
+				if (result[task_id][0][i] == $(_t).text()) {
+					break;
+				}
+			}
+			var sort = $(_t).attr('sort');
+			//0 means have sorted down
+			if (sort === '1') {
+				result[task_id].sort(function(x, y) {
+					if(x[i]==result[task_id][0][i]){
+						return -1;
+					}
+					else return sortFunction(x, y, i, true);
+				});
+			} else {
+				result[task_id].sort(function(x, y) {
+					if(x[i]==result[task_id][0][i]){
+						return -1;
+					}
+					else return sortFunction(x, y, i, false);
+				});
+			}
+			paintTable(task_id);
+			var th = scrollTable.children('thead').find('th').eq(i);
+			(sort==='1') ? th.attr('sort', '0') : th.attr('sort', '1');
+			e.stopPropagation();
+		}
+	});
+
+function toNumber(s){
+	var x = parseFloat(s),
+		i = 1;
+	// while(isNaN(x) && i<s.length){
+	// 	x = parseFloat(s.slice(i));
+	// 	i++;
+	// }
+	return x;
+}
+
+function sortFunction(x, y, col, up){
+	var a = toNumber(x[col]),
+		b = toNumber(y[col]);
+	if (isNaN(a) && isNaN(b)){
+		if (up){
+			return x[col].localeCompare(y[col]);
+		} else {
+			return y[col].localeCompare(x[col]);
+		}
+	} else if (up){
+		return a-b;
+	} else{
+		return b-a;
+	}
+}
+
 
 	$('input.filePrew').change(function() {
 		var _t = this;
@@ -207,11 +265,8 @@ function tableFitWidth() {
 			td = tds.eq(idx),
 			width;
 
-		if ($(this).width() > td.width()) {
-			width = $(this).width();
-		} else {
-			width = td.width();
-		}
+		width = $(this).width() > td.width() ? $(this).width() : td.width();
+
 		td.width(width);
 		$(this).width(width);
 	});
