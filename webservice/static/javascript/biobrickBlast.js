@@ -107,28 +107,8 @@ function init() {
 							dataArr = data.result;
 							// be transfromed to table
 							if (typeof dataArr === 'object') {
-								var table = $('<table>');
-								// have comment lines
-								if (dataArr[0][0] === 'query id') {
-									scrollTable.html('');
-									var theadTr = $('<tr>').appendTo($('<thead>').appendTo(table));
-									for (var i = 0; i < dataArr[0].length; i++) {
-										$('<th>').text(dataArr[0][i]).appendTo(theadTr);
-									}
-
-								}
-								// add tbody
-								var tbody = $('<tbody>').appendTo(table);
-								for (i = 1; i < dataArr.length; i++) {
-									var tr = $('<tr>').appendTo(tbody);
-									for (var j = 0; j < dataArr[i].length; j++) {
-										$('<td>').text(dataArr[i][j]).appendTo(tr);
-									}
-								}
-								result[task_id] = table.html();
+								result[task_id] = dataArr;
 								paintTable(task_id);
-
-
 							} else {
 								// output directly
 								textModalHead.text('Task_id : ' + task_id).css('color', '#119000');
@@ -183,7 +163,23 @@ function init() {
 
 function paintTable(task_id) {
 	if (result[task_id]) {
-		scrollTable.html(result[task_id]);
+		// have comment lines
+		scrollTable.html('');
+		if (result[task_id][0][0] === 'query id') {
+			var theadTr = $('<tr>').appendTo($('<thead>').appendTo(scrollTable));
+			for (var i = 0; i < result[task_id][0].length; i++) {
+				$('<th>').text(result[task_id][0][i]).appendTo(theadTr);
+			}
+
+		}
+		// add tbody
+		var tbody = $('<tbody>').appendTo(scrollTable);
+		for (i = 1; i < result[task_id].length; i++) {
+			var tr = $('<tr>').appendTo(tbody);
+			for (var j = 0; j < result[task_id][i].length; j++) {
+				$('<td>').text(result[task_id][i][j]).appendTo(tr);
+			}
+		}
 		tableModalHead.text('Task_id : ' + task_id).css('color', '#119000');
 		tableModal.modal('show');
 		tableFitWidth();
@@ -219,9 +215,12 @@ function tableFitWidth() {
 		td.width(width);
 		$(this).width(width);
 	});
-	var scrollBarWidth = tbody.width() - tbodyTr.width();
-	console.log(scrollBarWidth, tbody.width(),tbodyTr.width())
-	thead.css('margin-right', scrollBarWidth+'px');
+	setTimeout(function (){
+		var scrollBarWidth = tbody.width() - tbodyTr.width();
+		console.log(scrollBarWidth, tbody.width(),tbodyTr.width())
+		thead.css('margin-right', scrollBarWidth+'px');
+	},100)
+	
 
 }
 

@@ -152,6 +152,18 @@ pre{
 table.scrollTable thead{
 	display:block;
 }
+table.scrollTable thead th:hover{
+	background: #fbfbfb;
+	cursor: pointer;
+}
+table.scrollTable thead th:active{
+	background: #eeeeee;
+	color: #bbbbbb;
+	-webkit-box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.3), 0px 1px 0px white;
+	-moz-box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.3), 0px 1px 0px white;
+	box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.3), 0px 1px 0px white;
+	text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.4);
+}
 table.scrollTable tbody {
 	display: block;
 	max-height: 400px;
