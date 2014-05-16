@@ -46,8 +46,10 @@ function init() {
 		}
 	}
 
+
+
+	tableModal.modal();
 	textModal.modal();
-	tableFitWidth();
 
 
 	$('.ui.selection.dropdown').dropdown();
