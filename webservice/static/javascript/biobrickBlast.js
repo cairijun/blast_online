@@ -162,7 +162,7 @@ function init() {
 				});
 			}
 			paintSortTable(task_id);
-			(sort==='1') ? _t.attr('sort', '0') : _t.attr('sort', '1');
+			(sort==='1') ? $(_t).attr('sort', '0') : $(_t).attr('sort', '1');
 			e.stopPropagation();
 		}
 	});
@@ -204,7 +204,7 @@ function paintSortTable(task_id){
 			var tr = trs.eq(i);
 			var tds = tr.find('td');
 			for (var j = 0; j < colLen; j++){
-				td.eq(j).text(result[task_id][i][j]);
+				tds.eq(j).text(result[task_id][i][j]);
 			}
 		}
 	}
