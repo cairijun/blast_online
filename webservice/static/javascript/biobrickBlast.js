@@ -130,7 +130,6 @@ function init() {
 		} else if (_t.className === 'ui red button') {
 			var num = $(_t).attr('num');
 			textModalHead.text('Task_id : ' + task_id).css('color', '#CD2929');
-			console.log(textModalContent)
 			textModalContent.text(arr[num].msg);
 			textModal.modal('show');
 		}
@@ -292,7 +291,6 @@ function tableFitWidth() {
 	});
 	setTimeout(function (){
 		var scrollBarWidth = tbody.width() - tbodyTr.width();
-		console.log(scrollBarWidth, tbody.width(),tbodyTr.width())
 		thead.css('margin-right', scrollBarWidth+'px');
 	},100)
 	
@@ -356,7 +354,6 @@ function longPoll(arr, i) {
 	$.getJSON('/status/' + arr[i].task_id + '/poll')
 		.done(function(data) {
 			if (data.errno === 0) {
-				console.log(data.msg)
 				if (arr[i].status !== data.status) {
 					arr[i].status = data.status;
 					arr[i].err_msg = data.err_msg;
