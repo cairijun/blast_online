@@ -10,37 +10,36 @@
 	<title>Biobrick Blast</title>
 
 	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700">
-	<link rel="stylesheet" type="text/css" href="../static/css/semantic.min.css">
-	<link rel="stylesheet" type="text/css" href="../static/css/biobrickBlast.css"></head>
+	<link rel="stylesheet" type="text/css" href="/static/css/semantic.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/biobrickBlast.css"></head>
 <body>
-	<div id="container">
-		<h1 class="ui header"> <i class="lab icon"></i>
+	<div class="container">
+		<h1 class="ui header"> <img src="/static/images/logo.png">
 			Biobrick Blast
+			<button class="ui blue button fr">user guide</button>
 		</h1>
 
 		<div class="userPanel ui form">
-			<form id="userInput" action='/query' onsubmit="return false;" enctype="application/x-www-form-urlencoded">
-				<div class="paramPanel">
-					<div class="form-control">
-						<label>Program</label>
-						<div class="ui selection dropdown">
-							<input type="hidden" name="program" value="blastn"/>
-							<div class="default text">blastn</div> <i class="dropdown icon"></i>
-							<div class="menu ui transition hidden">
-								<div class="item" data-value="blastn">blastn</div>
-								<div class="item" data-value="blastp">blastp</div>
-								<div class="item" data-value="blastx">blastx</div>
-								<div class="item" data-value="tblastn">tblastn</div>
-								<div class="item" data-value="tblastx">tblastx</div>
-							</div>
-						</div>
-					</div>
+
+			<div class="paramPanel">
+				<p class="introduction">
+　　Have trouble finding biobricks containing or related to a known sequence? Biobrick Blast Online can certainly help you!<br/>
+　　Made by SYSU-Software and SYSU-China, Biobrick Blast Online is an online Biobrick alignment and search toolkit. Enter only your sequence, and you will soon get all Biobricks that contain or are related to your sequence, as well as the overall information on those Biobricks.<br/>
+　　This toolkit not only contains the latest complete iGEM part registry data but also helps you search Biobricks in 2013 or 2014 iGEM DNA Distribution. So move on and have a try! <br/>
+　　If you need any help or have any suggestion, please don’t hesitate to contact us!
+				</p>
+
+			</div>
+
+			<div class="inputSequences">
+				<form id="userInput" action='/query' onsubmit="return false;" enctype="application/x-www-form-urlencoded">
+					<input type="hidden" name="program" value="blastn"/>
+					<input type="hidden" name="outfmt" value="7" />
 					<div class="form-control">
 						<label>E-Value</label>
 						<div class="ui selection dropdown">
-							<input type="hidden" name="evalue" value="10"/>
-							<div class="default text">10</div>
-							<i class="dropdown icon"></i>
+							<input cached type="hidden" name="evalue" value="10"/>
+							<div class="default text">10</div> <i class="dropdown icon"></i>
 							<div class="menu ui transition hidden">
 								<div class="item" data-value="1000">1000</div>
 								<div class="item" data-value="100">100</div>
@@ -58,7 +57,7 @@
 					<div class="form-control">
 						<label>Database</label>
 						<div class="ui selection dropdown">
-							<input type="hidden" name="database" value="Biobrick"/>
+							<input cached type="hidden" name="database" value="Biobrick"/>
 							<div class="default text">Biobrick</div>
 							<i class="dropdown icon"></i>
 							<div class="menu ui transition hidden">
@@ -72,33 +71,6 @@
 							</div>
 						</div>
 					</div>
-
-					<div class="form-control">
-						<label>Output Format</label>
-						<div class="ui selection dropdown">
-							<input type="hidden" name="outfmt" value="7">
-							<div class="default text">tabular with comment lines</div>
-							<i class="dropdown icon"></i>
-							<div class="menu ui transition hidden">
-								<div class="item" data-value=0>pairwise</div>
-								<div class="item" data-value=1>query-anchored showing identities</div>
-								<div class="item" data-value=2>query-anchored no identities</div>
-								<div class="item" data-value=3>flat query-anchored show identities</div>
-								<div class="item" data-value=4>flat query-anchored no identities</div>
-								<div class="item" data-value=5>XML Blast output</div>
-								<div class="item" data-value=6>tabular</div>
-								<div class="item" data-value=7>tabular with comment lines</div>
-								<div class="item" data-value=8>Text ASN.1</div>
-								<div class="item" data-value=9>Binary ASN.1</div>
-								<div class="item" data-value=10>Comma-separated values</div>
-								<div class="item" data-value=11>BLAST archive format (ASN.1)</div>
-							</div>
-						</div>
-					</div>
-
-				</div>
-
-				<div class="inputSequences">
 					<div id="inputTextarea">
 						<label>Input Sequences:</label>
 						<textarea  name="input" id="inputText"></textarea>
@@ -114,10 +86,11 @@
 						</a>
 
 					</div>
-				</div>
-				<button class="ui blue button">Submit</button>
+					<button class="ui blue button">Submit</button>
 
-			</form>
+				</form>
+			</div>
+
 		</div>
 		<div class="ui horizontal divider">
 			<i class="lab icon"></i>
@@ -142,6 +115,13 @@
 			<tbody id="resultTbody"></tbody>
 		</table>
 	</div>
+	<div class="footer">
+		<div class="container">
+			Copyright © 2014 <a href="http://2013.igem.org/Team:SYSU-Software">SYSU-Software</a> & <a href="http://2013.igem.org/Team:SYSU-China">SYSU-China</a>
+			<br/>Sun Yat-Sen University, Guangzhou, China<br/>
+Email：sysusoftware@126.com
+		</div>
+	</div>
 	<div class="ui large modal" id="tableModal">
 		<i class="close icon"></i>
 		<div class="header"></div>
@@ -158,9 +138,9 @@
 			</form>
 		</div>
 	</div>
-
-	<script src="../static/javascript/jquery-2.0.3.min.js"></script>
-	<script src="../static/javascript/semantic.min.js"></script>
-	<script src="../static/javascript/biobrickBlast.js"></script>
+	
+	<script src="/static/javascript/jquery-2.0.3.min.js"></script>
+	<script src="/static/javascript/semantic.min.js"></script>
+	<script src="/static/javascript/biobrickBlast.js"></script>
 </body>
 </html>

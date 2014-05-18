@@ -23,10 +23,10 @@ function init() {
 	if (window.localStorage.getItem('task') && window.localStorage.getItem('task') !== '') {
 
 		var arr = $.parseJSON(window.localStorage.task);
-		// no more than 15 task_id
-		// while (arr.length>15){
-		// 	arr.shift();
-		// }
+		// no more than 10 task_id
+		while (arr.length>10){
+			arr.shift();
+		}
 		for (var i = arr.length - 1; i >= 0; i--) {
 			switch (arr[i].status) {
 				case 'finished':
@@ -67,7 +67,7 @@ function init() {
 			.fail(ajaxError);
 	});
 
-	$('input:hidden').change(function() {
+	$('div.paramPanel input[cached]').change(function() {
 		window.localStorage.setItem([this.name], $(this).val());
 	}).val(function() {
 		var value = window.localStorage.getItem(this.name) || $(this).val(),
@@ -83,6 +83,7 @@ function init() {
 		return value;
 	});
 
+	// submit query
 	querybtn.click(function(e) {
 		e.preventDefault();
 		this.className = "ui loading button";
@@ -90,6 +91,7 @@ function init() {
 		return false;
 	});
 
+	// show result or information
 	tbody.click(function(e) {
 		_t = e.target || e.srcElement;
 		var task_id = $(_t).attr('task-id');
