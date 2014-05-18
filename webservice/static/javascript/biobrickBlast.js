@@ -15,7 +15,8 @@ var tbody = $('#resultTbody'),
 	textModalContent = $('#textModal textarea'),
 	scrollTable = $('table.scrollTable'),
 	result = new Object(),
-	addTask_id;
+	addTask_id,
+	resizeTimeTask;
 
 $(init);
 
@@ -161,38 +162,11 @@ function init() {
 					else return sortFunction(x, y, i, false);
 				});
 			}
-			paintTable(task_id);
-			var th = scrollTable.children('thead').find('th').eq(i);
-			(sort==='1') ? th.attr('sort', '0') : th.attr('sort', '1');
+			paintSortTable(task_id);
+			(sort==='1') ? _t.attr('sort', '0') : _t.attr('sort', '1');
 			e.stopPropagation();
 		}
 	});
-
-function toNumber(s){
-	var x = parseFloat(s),
-		i = 1;
-	// while(isNaN(x) && i<s.length){
-	// 	x = parseFloat(s.slice(i));
-	// 	i++;
-	// }
-	return x;
-}
-
-function sortFunction(x, y, col, up){
-	var a = toNumber(x[col]),
-		b = toNumber(y[col]);
-	if (isNaN(a) && isNaN(b)){
-		if (up){
-			return x[col].localeCompare(y[col]);
-		} else {
-			return y[col].localeCompare(x[col]);
-		}
-	} else if (up){
-		return a-b;
-	} else{
-		return b-a;
-	}
-}
 
 
 	$('input.filePrew').change(function() {
@@ -223,6 +197,20 @@ function sortFunction(x, y, col, up){
 	});
 }
 
+function paintSortTable(task_id){
+	if (result[task_id]){
+		var trs = scrollTable.find('tr'),
+			colLen = result[task_id][0].length;
+		for (var i = 1; i < result[task_id].length; i++){
+			var tr = trs.eq(i);
+			var tds = tr.find('td');
+			for (var j = 0; j < colLen; j++){
+				td.eq(j).text(result[task_id][i][j]);
+			}
+		}
+	}
+}
+
 function paintTable(task_id) {
 	if (result[task_id]) {
 		// have comment lines
@@ -248,11 +236,39 @@ function paintTable(task_id) {
 	}
 	window.onresize = function() {
 		if (tableModal.hasClass('active')) {
-			console.log(1)
-			setTimeout(function() {
+			if (resizeTimeTask){
+				clearTimeout(resizeTimeTask);
+			}
+			resizeTimeTask = setTimeout(function() {
 				paintTable(task_id);
 			}, 200);
 		}
+	}
+}
+
+function toNumber(s){
+	var x = parseFloat(s),
+		i = 1;
+	// while(isNaN(x) && i<s.length){
+	// 	x = parseFloat(s.slice(i));
+	// 	i++;
+	// }
+	return x;
+}
+
+function sortFunction(x, y, col, up){
+	var a = toNumber(x[col]),
+		b = toNumber(y[col]);
+	if (isNaN(a) && isNaN(b)){
+		if (up){
+			return x[col].localeCompare(y[col]);
+		} else {
+			return y[col].localeCompare(x[col]);
+		}
+	} else if (up){
+		return a-b;
+	} else{
+		return b-a;
 	}
 }
 
