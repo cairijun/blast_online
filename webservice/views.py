@@ -86,7 +86,8 @@ def result(task_id):
 @app.route('/result/download/<task_id>')
 def result_download(task_id):
     return send_from_directory(os.path.abspath(config.BLAST_OUTPUT_DIR),
-                               task_id)
+                               task_id, as_attachment=True,
+                               attachment_filename=task_id+'.txt')
 
 
 def try_format_output(raw_data):
