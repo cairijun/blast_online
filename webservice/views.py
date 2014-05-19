@@ -92,14 +92,28 @@ def result_download(task_id):
 def try_format_output(raw_data):
     try:
         result = [[''] * 12]
+        sid_idx = None
+
         for row in raw_data.split('\n'):
             if row.startswith('# Fields:'):
                 result[0] = row[10:].split(', ')
             elif len(row) > 0 and not row.startswith('# '):
                 vals = row.split()
-                if len(vals) != len(result[0]):
-                    raise ValueError
                 result.append(vals)
+
+        try:
+            sid_idx = result[0].index('subject id')
+        except ValueError:
+            pass
+
+        if (sid_idx is not None and
+                len(result[-1][sid_idx].split('|')) == 3):
+            result[0][sid_idx] = 'subject_id|type|description'
+            for row in result:
+                row[sid_idx:sid_idx+1] = row[sid_idx].split('|')
+                if len(row) != len(result[0]):
+                    raise ValueError
+
     except ValueError:
         return raw_data
     return result
