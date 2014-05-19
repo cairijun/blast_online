@@ -144,18 +144,19 @@ function init() {
 					break;
 				}
 			}
-			var sort = $(_t).attr('sort');
+			var sort = $(_t).attr('sort'),
+				thText = result[task_id][0][i];
 			//0 means have sorted down
 			if (sort === '1') {
 				result[task_id].sort(function(x, y) {
-					if(x[i]==result[task_id][0][i]){
+					if(x[i]==thText){
 						return -1;
 					}
 					else return sortFunction(x, y, i, true);
 				});
 			} else {
 				result[task_id].sort(function(x, y) {
-					if(x[i]==result[task_id][0][i]){
+					if(x[i]==thText){
 						return -1;
 					}
 					else return sortFunction(x, y, i, false);
