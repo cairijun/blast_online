@@ -4,7 +4,6 @@
  * @date    2014-05-04 23:38:22
  * @version $1.0$
  */
-
 var tbody = $('#resultTbody'),
 	inputForm = $('form#userInput'),
 	querybtn = $('form#userInput > button'),
@@ -14,6 +13,10 @@ var tbody = $('#resultTbody'),
 	textModalHead = $('#textModal .header'),
 	textModalContent = $('#textModal textarea'),
 	scrollTable = $('table.scrollTable'),
+	userGuideModal = $('#userGuideModal'),
+	btnArrowLeft = userGuideModal.find('.btn-arrow.left'),
+	btnArrowRight = userGuideModal.find('.btn-arrow.right'),
+	inputExample_text = $('#inputExample-txt').contents().find('pre').text(),
 	result = new Object(),
 	addTask_id,
 	resizeTimeTask;
@@ -51,6 +54,7 @@ function init() {
 
 	tableModal.modal();
 	textModal.modal();
+	userGuideModal.modal();
 
 
 	$('.ui.selection.dropdown').dropdown();
@@ -66,6 +70,10 @@ function init() {
 		$.getJSON('/status/' + addTask_id)
 			.done(addTask)
 			.fail(ajaxError);
+	});
+
+	$('#btn-inputExample').click(function (){
+		$('#inputText').val(inputExample_text);
 	});
 
 	$('div.paramPanel input[cached]').change(function() {
@@ -94,7 +102,7 @@ function init() {
 
 	// show result or information
 	tbody.click(function(e) {
-		_t = e.target || e.srcElement;
+		_t = e.target;
 		var task_id = $(_t).attr('task-id');
 		if (_t.className === 'ui green button') {
 			//if cached
@@ -136,7 +144,7 @@ function init() {
 	});
 
 	$('.scrollTable').click(function(e) {
-		var _t = e.target || e.srcElement,
+		var _t = e.target,
 			task_id = tableModalHead.text().slice(10);
 		if (_t.tagName === 'TH') {
 			for (var i = 0; i < result[task_id][0].length; i++) {
@@ -195,17 +203,75 @@ function init() {
 	}, function() {
 		$(this).find('i').css('visibility', 'hidden');
 	});
+
+	// userGuide's slider
+	$('#btn-userGuide').click(function(){
+		userGuideModal.modal('show');
+	});
+	userGuideModal.find('.content img').each(function(i){
+		if (i===0){
+			$(this).addClass("ui transition image visible");
+		} else {
+			$(this).addClass("ui transition image hidden")
+		}
+
+	});
+	btnArrowLeft.hide();
+	userGuideModal.children('.btn-arrow').click(function(e){
+		btnArrowRight.show();
+		btnArrowLeft.show();
+		var _t = $(e.target),
+			imgs = userGuideModal.find('.content img');
+		for (var i = 0; i < imgs.length; i++){
+			if (imgs.eq(i).hasClass("visible")){
+				break;
+			}
+		}
+		if(_t.hasClass("left")){
+			if (i===1){
+				btnArrowLeft.hide();
+			}
+			if (i===0){
+				return;
+			}
+			imgs.eq(i).transition('horizontal flip','400ms');
+			imgs.eq(i-1).transition('horizontal flip','400ms');
+		} else {
+			if (i===imgs.length-2){
+				btnArrowRight.hide();
+			}
+			if (i===imgs.length-1){
+				return;
+			}
+			imgs.eq(i).transition('horizontal flip','400ms');
+			imgs.eq(i+1).transition('horizontal flip','400ms');
+		}
+
+	})
 }
 
 function paintSortTable(task_id){
 	if (result[task_id]){
 		var trs = scrollTable.find('tr'),
-			colLen = result[task_id][0].length;
-		for (var i = 1; i < result[task_id].length; i++){
+			colLen = result[task_id][0].length,
+			subject_id;
+		for (var i = 0; i < result[task_id][0].length; i++) {
+			if(result[task_id][0][i]=='subject_id'){
+				subject_id = i;
+			}
+		}
+		for (i = 1; i < result[task_id].length; i++){
 			var tr = trs.eq(i);
 			var tds = tr.find('td');
 			for (var j = 0; j < colLen; j++){
-				tds.eq(j).text(result[task_id][i][j]);
+				if(j===subject_id){
+					tds.eq(j).html($('<a>').attr({
+						'href':'http://parts.igem.org/Part:'+result[task_id][i][j],
+						'target':'_blank'})
+						.text(result[task_id][i][j]))
+				} else {
+					tds.eq(j).text(result[task_id][i][j]);
+				}
 			}
 		}
 	}
@@ -215,9 +281,13 @@ function paintTable(task_id) {
 	if (result[task_id]) {
 		// have comment lines
 		scrollTable.html('');
+		var subject_id;
 		if (result[task_id][0][0] === 'query id') {
 			var theadTr = $('<tr>').appendTo($('<thead>').appendTo(scrollTable));
 			for (var i = 0; i < result[task_id][0].length; i++) {
+				if(result[task_id][0][i]=='subject_id'){
+					subject_id = i;
+				}
 				$('<th>').text(result[task_id][0][i]).appendTo(theadTr);
 			}
 
@@ -227,7 +297,15 @@ function paintTable(task_id) {
 		for (i = 1; i < result[task_id].length; i++) {
 			var tr = $('<tr>').appendTo(tbody);
 			for (var j = 0; j < result[task_id][i].length; j++) {
-				$('<td>').text(result[task_id][i][j]).appendTo(tr);
+				if(j===subject_id){
+					td = $('<td>').append($('<a>').attr({
+						'href':'http://parts.igem.org/Part:'+result[task_id][i][j],
+						'target':'_blank'})
+						.text(result[task_id][i][j]));
+				} else {
+					td = $('<td>').text(result[task_id][i][j]);
+				}
+				td.appendTo(tr)
 			}
 		}
 		tableModalHead.text('Task_id : ' + task_id).css('color', '#119000');
@@ -344,6 +422,7 @@ function waiting(arr, i) {
 	return tr;
 }
 
+//if a task is end status
 function isEnd(arr, i) {
 	if (arr[i].status !== 'finished' && arr[i].status !== 'failed' && arr[i].status !== 'nonexistent') {
 		return false;
@@ -428,8 +507,9 @@ function addTask(data) {
 		window.localStorage.setItem('task', JSON.stringify(arr));
 		window.location.reload();
 	} else {
-		// 查询提交失败
+		// query submit failed
 		alert(data.err_msg);
 		querybtn.className = 'ui blue button';
 	}
 }
+

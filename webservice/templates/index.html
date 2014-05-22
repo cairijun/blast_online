@@ -17,7 +17,7 @@
 		<h1 class="ui header">
 			<img src="/static/images/logo.png">
 			Biobrick Blast
-			<button class="ui blue button fr">user guide</button>
+			<button class="ui tiny blue button fr" id="btn-userGuide">user guide</button>
 		</h1>
 
 		<div class="userPanel ui form">
@@ -75,12 +75,22 @@
 						</div>
 					</div>
 					<div id="inputTextarea">
-						<label>Input Sequences:</label>
+						<label>
+							Input Sequences
+							<span class="description">(in fasta format)</span>
+							:
+							<button class="ui mini button" id="btn-inputExample">Input Format Example</button>
+						</label>
 						<textarea  name="input" id="inputText"></textarea>
 					</div>
 					<div id="inputFile">
-						<label>Input File:</label>
-						<span id="fileName"></span>
+						<label>
+							Input File :
+							<span id="fileName"></span>
+							<br/>
+							<span class="description">(in fasta format)</span>
+						</label>
+
 						<a class="btn_addPic" href="javascript:void(0);">
 							<span> <em>+</em>
 								select file
@@ -123,7 +133,8 @@
 			Copyright © 2014
 			<a href="http://2013.igem.org/Team:SYSU-Software">SYSU-Software</a>
 			&
-			<a href="http://2013.igem.org/Team:SYSU-China">SYSU-China</a>. All Rights Reserved
+			<a href="http://2013.igem.org/Team:SYSU-China">SYSU-China</a>
+			. All Rights Reserved
 			<br/>
 			Sun Yat-Sen University, Guangzhou, China
 			<br/>
@@ -146,7 +157,24 @@
 			</form>
 		</div>
 	</div>
-
+	<div class="ui modal" id="userGuideModal">
+		<i class="close icon"></i>
+		<div class="btn-arrow left">
+			<i class="angle left icon"></i>
+		</div>
+		<div class="btn-arrow right">
+			<i class="angle right icon"></i>
+		</div>
+		<div class="content">
+			<img src="/static/images/logo.png" width="700" height="400">
+			<img src="/static/images/add.png"  width="700" height="400"/>
+			<img src="/static/images/logo.png" width="700" height="400">
+			<img src="/static/images/add.png"  width="700" height="400"/>
+			<img src="/static/images/logo.png" width="700" height="400">
+			<img src="/static/images/add.png"  width="700" height="400"/>
+		</div>
+	</div>
+	<iframe src="/static/data_file/input_example.txt" id="inputExample-txt"></iframe>
 	<script src="/static/javascript/jquery-2.0.3.min.js"></script>
 	<script src="/static/javascript/semantic.min.js"></script>
 	<script src="/static/javascript/biobrickBlast.js"></script>
