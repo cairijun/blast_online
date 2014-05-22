@@ -52,9 +52,15 @@ textarea#inputText{
 .ui.button{
 	text-transform: none;
 }
-#userInput > button{
-	margin-top: 20px;
+#btn-query{
+	margin-top: 15px;
 	margin-left: 200px;
+	margin-bottom: 5px;
+}
+#btn-clean{
+	margin-top: 15px;
+	margin-left: 50px;
+	margin-bottom: 5px;
 }
 a{
 	text-decoration:none;
@@ -74,7 +80,7 @@ a{
 	vertical-align: middle;
 	margin-top: -30px;
 }
-.btn_addPic label{
+#inputFile > label{
 	display: inline-block;
 }
 .btn_addPic span{
@@ -256,8 +262,7 @@ a:visited{
 	font-size: 1rem;
 }
 #inputTextarea button{
-	margin-left: 161px;
-	margin-top: -10px;
+	float: right;
 }
 #inputExample-txt{
 	display: none;

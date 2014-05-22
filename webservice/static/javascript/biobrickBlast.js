@@ -6,7 +6,7 @@
  */
 var tbody = $('#resultTbody'),
 	inputForm = $('form#userInput'),
-	querybtn = $('form#userInput > button'),
+	querybtn = $('#btn-query'),
 	tableModal = $('#tableModal'),
 	tableModalHead = $('#tableModal .header'),
 	textModal = $('#textModal'),
@@ -17,13 +17,17 @@ var tbody = $('#resultTbody'),
 	btnArrowLeft = userGuideModal.find('.btn-arrow.left'),
 	btnArrowRight = userGuideModal.find('.btn-arrow.right'),
 	inputExample_text = $('#inputExample-txt').contents().find('pre').text(),
+	inputFile = $('input.filePrew'),
 	result = new Object(),
 	addTask_id,
 	resizeTimeTask;
 
 $(init);
 
+
+
 function init() {
+	// load task locally
 	if (window.localStorage.getItem('task') && window.localStorage.getItem('task') !== '') {
 
 		var arr = $.parseJSON(window.localStorage.task);
@@ -31,38 +35,16 @@ function init() {
 		while (arr.length>10){
 			arr.shift();
 		}
-		for (var i = arr.length - 1; i >= 0; i--) {
-			switch (arr[i].status) {
-				case 'finished':
-					tbody.append(finished(arr, i));
-					break;
-				case 'failed':
-					tbody.append(failed(arr, i));
-					break;
-				case 'nonexistent':
-					tbody.append(nonexistent(arr, i));
-					break;
-				default:
-					tbody.append(waiting(arr, i));
-					longPoll(arr, i);
-					break;
-			}
+		for (var i = 0; i < arr.length; i++) {
+			paintTask(i);
 		}
 	}
-
-
 
 	tableModal.modal();
 	textModal.modal();
 	userGuideModal.modal();
 
-
 	$('.ui.selection.dropdown').dropdown();
-
-	$('a[data-url]').click(function(e) {
-		e.preventDefault();
-		$.get($(this).attr('data-url'));
-	})
 
 	$('#taskQuery button').click(function(e) {
 		e.preventDefault();
@@ -76,21 +58,17 @@ function init() {
 		$('#inputText').val(inputExample_text);
 	});
 
-	$('div.paramPanel input[cached]').change(function() {
-		window.localStorage.setItem([this.name], $(this).val());
-	}).val(function() {
-		var value = window.localStorage.getItem(this.name) || $(this).val(),
-			defaultDiv = $(this).next();
-
-		if (this.name === 'outfmt') {
-			var text = defaultDiv.next().next()
-				.find($('div[data-value=' + value + ']')).text();
-			defaultDiv.text(text);
-		} else {
-			defaultDiv.text(value);
+	// load users last dropdown input
+	$('div.inputSequences [cached]').each(function (){
+		var key = $(this).attr('cached'),
+			value = window.localStorage.getItem(key) || $(this).val(),
+			_t = $(this);
+		if (key==='evalue' || key==='database'){
+			_t.val(value).next().text(value);
 		}
-		return value;
-	});
+	}).change(function() {
+		window.localStorage.setItem($(this).attr('cached'), $(this).val());
+	}).change();
 
 	// submit query
 	querybtn.click(function(e) {
@@ -100,6 +78,10 @@ function init() {
 		return false;
 	});
 
+	$('#btn-clean').click(function(){
+		$('#inputText').val("");
+		inputFile.val("").change();
+	});
 	// show result or information
 	tbody.click(function(e) {
 		_t = e.target;
@@ -136,7 +118,8 @@ function init() {
 					}).fail(ajaxError);
 			}
 		} else if (_t.className === 'ui red button') {
-			var num = $(_t).attr('num');
+			var num = $(_t).attr('num'),
+				arr = $.parseJSON(window.localStorage.task);
 			textModalHead.text('Task_id : ' + task_id).css('color', '#CD2929');
 			textModalContent.text(arr[num].msg);
 			textModal.modal('show');
@@ -177,7 +160,7 @@ function init() {
 	});
 
 
-	$('input.filePrew').change(function() {
+	inputFile.change(function() {
 		var _t = this;
 		if (this.value !== '') {
 			$('#fileName').html(_t.files[0].name + '<i class="icon close"></i>');
@@ -188,7 +171,7 @@ function init() {
 				'action': '/query/upload'
 			});
 			$('#fileName > i').click(function() {
-				$('input.filePrew').val('').change();
+				inputFile.val('').change();
 			});
 		} else {
 			$('#fileName').text('');
@@ -483,11 +466,12 @@ function submitInput() {
 		contentType: false,
 		processData: false,
 	})
-		.done(addTask)
-		.fail(function() {
-			ajaxError();
-			querybtn.className = 'ui blue button';
-		});
+	.done(addTask)
+	.fail(function() {
+		ajaxError();
+			
+	});
+	
 }
 
 function addTask(data) {
@@ -505,11 +489,29 @@ function addTask(data) {
 			arr.push(taskObj);
 		}
 		window.localStorage.setItem('task', JSON.stringify(arr));
-		window.location.reload();
+		paintTask(arr.length-1);
 	} else {
 		// query submit failed
 		alert(data.err_msg);
-		querybtn.className = 'ui blue button';
 	}
+	querybtn[0].className = 'ui blue button';
 }
 
+function paintTask(i){
+	var arr = $.parseJSON(window.localStorage.task);
+	switch (arr[i].status) {
+		case 'finished':
+			tbody.prepend(finished(arr, i));
+			break;
+		case 'failed':
+			tbody.prepend(failed(arr, i));
+			break;
+		case 'nonexistent':
+			tbody.prepend(nonexistent(arr, i));
+			break;
+		default:
+			tbody.prepend(waiting(arr, i));
+			longPoll(arr, i);
+			break;
+	}
+}
