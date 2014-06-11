@@ -35,3 +35,22 @@ BLAST_INPUT_DIR = './tmp/input'
 BLAST_OUTPUT_DIR = './tmp/output'
 
 POLL_STATUS_RETRIES = 50
+
+STATS_COUNT_UPDATE_SCRIPT = """
+local total = redis.call('incr', 'stats_count:total')
+
+local today = redis.call('incr', 'stats_count:today')
+local peek = redis.call('get', 'stats_count:peek')
+if peek == false then
+    peek = 0
+end
+if today > tonumber(peek) then
+    redis.call('set', 'stats_count:peek', today)
+    peek = today
+end
+
+local tomorrow = math.ceil(tonumber(KEYS[1]) / 86400) * 86400
+redis.call('expireat', 'stats_count:today', tomorrow)
+
+return {total, today, peek}
+"""

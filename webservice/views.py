@@ -13,7 +13,8 @@ from . import app
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    stats = _stats_count(incr=True)
+    return render_template('index.html', **stats)
 
 
 @app.route('/query', methods=['POST'])
@@ -88,6 +89,24 @@ def result_download(task_id):
     return send_from_directory(os.path.abspath(config.BLAST_OUTPUT_DIR),
                                task_id, as_attachment=True,
                                attachment_filename=task_id+'.txt')
+
+
+@app.route('/stats/count')
+def stats_count():
+    return jsonify(**_stats_count(incr=False))
+
+
+def _stats_count(incr):
+    r = redis.Redis()
+
+    if incr:
+        result = r.eval(config.STATS_COUNT_UPDATE_SCRIPT, 1, int(time.time()))
+    else:
+        result = [r.get('stats_count:total'),
+                  r.get('stats_count:today'),
+                  r.get('stats_count:peek')]
+
+    return {'total': result[0], 'today': result[1], 'peek': result[2]}
 
 
 def try_format_output(raw_data):
