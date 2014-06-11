@@ -4,6 +4,7 @@
  * @date    2014-05-04 23:38:22
  * @version $1.0$
  */
+ 
 var tbody = $('#resultTbody'),
 	inputForm = $('form#userInput'),
 	querybtn = $('#btn-query'),
@@ -29,6 +30,13 @@ $(init);
 
 
 function init() {
+	$('.ui.selection.dropdown').dropdown();
+	tableModal.modal();
+	textModal.modal();
+	userGuideModal.modal();
+
+
+
 	// load task locally
 	if (window.localStorage.getItem('task') 
 		&& window.localStorage.getItem('task') !== '') {
@@ -43,18 +51,14 @@ function init() {
 		}
 	}
 
-	userGuideInit(11,userGuideModal.children('.content'),circleTab);
+	
 
-	tableModal.modal();
-	textModal.modal();
-	userGuideModal.modal();
+	
 
 	$('#scrollDiv').scroll(function (){
 		var _t = this;
-		originTable.css('top', _t.scrollTop+'px');
+		cloneTable.css('top', _t.scrollTop+'px');
 	});
-
-	$('.ui.selection.dropdown').dropdown();
 
 	$('#taskQuery button').click(function(e) {
 		e.preventDefault();
@@ -279,23 +283,27 @@ function init() {
 			}
 		});
 	});
+	setTimeout(function (){
+		userGuideInit(11,userGuideModal.children('.content'),circleTab);
+		userGuideModal.children('button').click(function (){
+			var _t = $(this);
+			if (_t.text()==='中文'){
+				_t.text('English');
+				imgs.each(function (){
+					var src = $(this).attr('src');
+					$(this).attr('src', src.slice(0,-7)+'c'+src.slice(-6));
+				});
+			} else {
+				_t.text('中文');
+				imgs.each(function (){
+					var src = $(this).attr('src');
+					$(this).attr('src', src.slice(0,-7)+'e'+src.slice(-6));
+				});
+			}
+		});
+	}, 2000);
 
-	userGuideModal.children('button').click(function (){
-		var _t = $(this);
-		if (_t.text()==='中文'){
-			_t.text('English');
-			imgs.each(function (){
-				var src = $(this).attr('src');
-				$(this).attr('src', src.slice(0,-7)+'c'+src.slice(-6));
-			});
-		} else {
-			_t.text('中文');
-			imgs.each(function (){
-				var src = $(this).attr('src');
-				$(this).attr('src', src.slice(0,-7)+'e'+src.slice(-6));
-			});
-		}
-	});
+
 
 }
 
@@ -582,4 +590,9 @@ function userGuideInit(n, content, circleTab){
 		}
 	}
 	circleTab.css('margin-left',(-28*n)/2+'px');
+	for (var i = 1; i<=n; i++){
+		var str = i < 10 ? '0'+i : i; 
+		$.get('/static/images/user_guide/c'+str+'.jpg');
+	}
+	
 }
